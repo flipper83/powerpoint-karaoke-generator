@@ -16,8 +16,8 @@ class ImageProvider(object):
 
     def next_image(self):
         images = []
-        for submission in self.reddit.subreddit('Funnypics').new():
-            images.append(submission.preview['images'][0]['source']['url'])
+        submission = self.reddit.subreddit('Funnypics').random()
+        images.append(submission.preview['images'][0]['source']['url'])
 
         image_to_download = random.choice(images)
         urllib.request.urlretrieve(image_to_download, "image.jpg")
