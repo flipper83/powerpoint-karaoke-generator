@@ -1,24 +1,12 @@
 import random
-import urllib.request
-
-import praw
 
 
 class ImageProvider(object):
-    reddit = None
+    image_sources = []
 
-    def __init__(self):
-        self.reddit = praw.Reddit(client_id='YKo_9gh5XpDJYQ',
-                     client_secret= None,
-                     redirect_uri='http://localhost:8080',
-                     user_agent='karaoke')
-        self.reddit.read_only = True
+    def __init__(self, image_sources):
+        self.image_sources = image_sources
 
     def next_image(self):
-        images = []
-        submission = self.reddit.subreddit('Funnypics').random()
-        images.append(submission.preview['images'][0]['source']['url'])
-
-        image_to_download = random.choice(images)
-        urllib.request.urlretrieve(image_to_download, "image.jpg")
-        return "image.jpg"
+        image_source = random.choice(self.image_sources)
+        return image_source.next_image()

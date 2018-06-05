@@ -1,4 +1,5 @@
 from powerpointkaraoke.image_provider import ImageProvider
+from powerpointkaraoke.imagesources.reddit_image_source import RedditImageSource
 from powerpointkaraoke.karaoke_presentation import KaraokePresentation
 
 
@@ -28,6 +29,6 @@ class KaraokeGenerator:
 
 
 if __name__ == '__main__':
-    provider = ImageProvider()
+    provider = ImageProvider([RedditImageSource()])
     karaoke_generator = KaraokeGenerator(provider)
     karaoke_generator.generate()

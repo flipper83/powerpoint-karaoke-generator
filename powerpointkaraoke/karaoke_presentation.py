@@ -1,5 +1,5 @@
 from pptx import Presentation
-from pptx.util import Inches, Pt, Emu
+from pptx.util import Inches, Emu
 
 SLD_LAYOUT_TITLE = 0
 SLD_LAYOUT_IMAGE = 6
