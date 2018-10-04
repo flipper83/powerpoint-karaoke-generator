@@ -3,7 +3,7 @@ import random
 from PIL import Image
 from pptx import Presentation
 from pptx.chart.data import ChartData
-from pptx.enum.chart import XL_CHART_TYPE
+from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
 from pptx.util import Inches, Emu
 
 SLD_LAYOUT_TITLE = 0
@@ -13,8 +13,14 @@ SLD_LAYOUT_CHART = 6
 
 def random_values(size):
     values = []
+    max_value = 100
     for index_slide in range(0, size):
-        values.append(random.randint(5, 100))
+        current_value = random.randint(0, max_value)
+        values.append(current_value/100)
+        max_value -= current_value
+        if max_value < 0:
+            max_value = 0
+
     return values
 
 
@@ -31,6 +37,29 @@ class KaraokePresentation:
         subtitle = slide.placeholders[1]
         title.text = title_value
         subtitle.text = subtitle_value
+
+    def add_pie_chart(self, categories):
+        chart_layout = self.presentation.slide_layouts[SLD_LAYOUT_CHART]
+        slide = self.presentation.slides.add_slide(chart_layout)
+
+        chart_data = ChartData()
+        chart_data.categories = categories
+        values = random_values(len(categories))
+        chart_data.add_series('Serie', values)
+
+        x, y, cx, cy = Inches(2), Inches(2), Inches(6), Inches(4.5)
+
+        chart = slide.shapes.add_chart(
+            XL_CHART_TYPE.PIE, x, y, cx, cy, chart_data
+        ).chart
+
+        chart.has_legend = True
+        chart.legend.position = XL_LEGEND_POSITION.BOTTOM
+        chart.legend.include_in_layout = False
+
+        chart.plots[0].has_data_labels = True
+        data_labels = chart.plots[0].data_labels
+        data_labels.number_format = '#%'
 
     def add_bar_chat(self, categories):
         chart_layout = self.presentation.slide_layouts[SLD_LAYOUT_CHART]

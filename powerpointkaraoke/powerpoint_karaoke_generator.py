@@ -18,6 +18,7 @@ class KaraokeGenerator:
         return self.karaoke_presentation
 
     def add_slides(self, num_slides):
+        self.karaoke_presentation.add_pie_chart(self.chart_text_provider.next_titles())
         self.karaoke_presentation.add_bar_chat(self.chart_text_provider.next_titles())
         for index_slide in range(0, num_slides):
             image_downloaded = self.image_provider.next_image()
