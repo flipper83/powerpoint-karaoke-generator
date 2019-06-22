@@ -1,10 +1,14 @@
+import os
 import random
 
 from PIL import Image
 from pptx import Presentation
 from pptx.chart.data import ChartData
-from pptx.enum.chart import XL_CHART_TYPE
-from pptx.util import Inches, Emu
+from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
+from pptx.enum.text import MSO_AUTO_SIZE, PP_PARAGRAPH_ALIGNMENT
+from pptx.util import Inches, Emu, Pt
+
+from powerpointkaraoke.get_out_path import get_out_path
 
 SLD_LAYOUT_TITLE = 0
 SLD_LAYOUT_IMAGE = 6
@@ -13,8 +17,14 @@ SLD_LAYOUT_CHART = 6
 
 def random_values(size):
     values = []
+    max_value = 100
     for index_slide in range(0, size):
-        values.append(random.randint(5, 100))
+        current_value = random.randint(0, max_value)
+        values.append(current_value / 100)
+        max_value -= current_value
+        if max_value < 0:
+            max_value = 0
+
     return values
 
 
@@ -32,7 +42,7 @@ class KaraokePresentation:
         title.text = title_value
         subtitle.text = subtitle_value
 
-    def add_bar_chat(self, categories):
+    def add_pie_chart(self, categories):
         chart_layout = self.presentation.slide_layouts[SLD_LAYOUT_CHART]
         slide = self.presentation.slides.add_slide(chart_layout)
 
@@ -41,7 +51,40 @@ class KaraokePresentation:
         values = random_values(len(categories))
         chart_data.add_series('Serie', values)
 
-        # add chart to slide --------------------
+        self.add_title(slide)
+
+        x, y, cx, cy = Inches(2), Inches(2), Inches(6), Inches(4.5)
+        chart = slide.shapes.add_chart(
+            XL_CHART_TYPE.PIE, x, y, cx, cy, chart_data
+        ).chart
+
+        chart.has_legend = True
+        chart.legend.position = XL_LEGEND_POSITION.BOTTOM
+        chart.legend.include_in_layout = False
+
+        chart.plots[0].has_data_labels = True
+        data_labels = chart.plots[0].data_labels
+        data_labels.number_format = '#%'
+
+    def add_title(self, slide):
+        x, y, cx, cy = Inches(2), Inches(0.5), Inches(6), Inches(4.5)
+        title = slide.shapes.add_textbox(x, y, cx, cy)
+        title.tsext = ""
+        title.text_frame.paragraphs[0].font.size = Pt(50)
+        title.text_frame.paragraphs[0].alignment = PP_PARAGRAPH_ALIGNMENT.CENTER
+        title.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
+
+    def add_bar_chat(self, categories):
+        chart_layout = self.presentation.slide_layouts[SLD_LAYOUT_CHART]
+        slide = self.presentation.slides.add_slide(chart_layout)
+
+        self.add_title(slide)
+
+        chart_data = ChartData()
+        chart_data.categories = categories
+        values = random_values(len(categories))
+        chart_data.add_series('Serie', values)
+
         x, y, cx, cy = Inches(2), Inches(2), Inches(6), Inches(4.5)
         slide.shapes.add_chart(
             XL_CHART_TYPE.COLUMN_CLUSTERED, x, y, cx, cy, chart_data)
@@ -56,7 +99,8 @@ class KaraokePresentation:
         picture.left = Inches(pos_x).emu
 
     def save(self):
-        self.presentation.save('test.pptx')
+        ppt_path = get_out_path("karaoke.pptx")
+        self.presentation.save(ppt_path)
 
     def get_image_size(self, image_downloaded):
         im = Image.open(image_downloaded)
