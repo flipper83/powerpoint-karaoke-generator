@@ -8,6 +8,8 @@ from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
 from pptx.enum.text import MSO_AUTO_SIZE, PP_PARAGRAPH_ALIGNMENT
 from pptx.util import Inches, Emu, Pt
 
+from powerpointkaraoke.get_out_path import get_out_path
+
 SLD_LAYOUT_TITLE = 0
 SLD_LAYOUT_IMAGE = 6
 SLD_LAYOUT_CHART = 6
@@ -97,7 +99,8 @@ class KaraokePresentation:
         picture.left = Inches(pos_x).emu
 
     def save(self):
-        self.presentation.save('test.pptx')
+        ppt_path = get_out_path("karaoke.pptx")
+        self.presentation.save(ppt_path)
 
     def get_image_size(self, image_downloaded):
         im = Image.open(image_downloaded)

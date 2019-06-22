@@ -3,6 +3,8 @@ import urllib.request
 
 import praw
 
+from powerpointkaraoke.get_out_path import get_out_path
+
 
 class RedditImageSource(object):
     reddit = None
@@ -18,5 +20,7 @@ class RedditImageSource(object):
     def next_image(self):
         submission = self.reddit.subreddit('Funnypics').random()
         url = submission.preview['images'][0]['source']['url']
-        urllib.request.urlretrieve(url, self.filename)
-        return self.filename
+        out_path = get_out_path(self.filename)
+
+        urllib.request.urlretrieve(url, out_path)
+        return out_path
