@@ -1,3 +1,4 @@
+import os
 import random
 
 from PIL import Image
@@ -66,7 +67,7 @@ class KaraokePresentation:
     def add_title(self, slide):
         x, y, cx, cy = Inches(2), Inches(0.5), Inches(6), Inches(4.5)
         title = slide.shapes.add_textbox(x, y, cx, cy)
-        title.text = "pie graph"
+        title.tsext = ""
         title.text_frame.paragraphs[0].font.size = Pt(50)
         title.text_frame.paragraphs[0].alignment = PP_PARAGRAPH_ALIGNMENT.CENTER
         title.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
